@@ -75,8 +75,8 @@ namespace WordleClone
             System.Console.WriteLine("Enter a 5 letter word: ");
             string userInput = Console.ReadLine();
 
-            if (userInput.Length == 5) {
-                this.userChoice = userInput;
+            if (userInput.Length == 5 && userInput.All(Char.IsLetter)) {
+                this.userChoice = userInput.ToLower();
                 System.Console.WriteLine(this.userChoice);
             } else {
                 System.Console.WriteLine("input doesn't meet requirements");

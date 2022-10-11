@@ -40,20 +40,13 @@ namespace WordleClone
                     }
                 }
 
-            }
+                Random randomNumber = new Random();
+                numberChoice = randomNumber.Next(1,wordListLength);
 
-            Random randomNumber = new Random();
-            numberChoice = randomNumber.Next(1,wordListLength);
+            // System.Console.WriteLine(numberChoice);
 
-           // System.Console.WriteLine(numberChoice);
+                string computerChoiceQuery = $"SELECT word FROM words WHERE id = {numberChoice};";
 
-            string computerChoiceQuery = $"SELECT word FROM words WHERE id = {numberChoice};";
-
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                connection.Open();
-
-                // get column length
                 using (var command = new MySqlCommand(computerChoiceQuery, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -66,7 +59,6 @@ namespace WordleClone
                         }
                     }
                 }
-
             }
         }
 

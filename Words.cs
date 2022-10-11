@@ -59,6 +59,8 @@ namespace WordleClone
                         }
                     }
                 }
+
+                connection.Close();
             }
         }
 
@@ -69,6 +71,7 @@ namespace WordleClone
 
             if (userInput.Length == 5 && userInput.All(Char.IsLetter)) {
                 this.userChoice = userInput.ToLower();
+                this.attemps++;
                 System.Console.WriteLine(this.userChoice);
             } else {
                 System.Console.WriteLine("input doesn't meet requirements");
@@ -79,7 +82,7 @@ namespace WordleClone
         public void checkWinner() {
             if (this.userChoice.Equals(this.computerChoice)) {
                 System.Console.WriteLine("Winner!!");
-                System.Console.WriteLine($"You took {this.attemps + 1} tries");
+                System.Console.WriteLine($"You took {this.attemps} tries");
                 return;
             } 
 
@@ -106,14 +109,15 @@ namespace WordleClone
             if (sumTotal == 10)
             {
                 System.Console.WriteLine("Winner!!");
+                return;
             } else if (this.attemps < this.maxAttempts) {
-                this.attemps++;
                 System.Console.WriteLine($"{this.attemps} attempt, {(this.maxAttempts - this.attemps)} attemps remaining"); // needs refining as get to 0 attempts and allows one more
                 System.Console.WriteLine($"sum total: {sumTotal}");
                 this.generateUserChoice();
                 this.checkWinner();
             } else {
                 System.Console.WriteLine($"no attempts left word was: {this.computerChoice}");
+                return;
             }
 
 

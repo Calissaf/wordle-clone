@@ -148,7 +148,6 @@ namespace WordleClone
                 return;
             } else if (this.attemps < this.maxAttempts) {
                 System.Console.WriteLine($"{this.attemps} attempt, {(this.maxAttempts - this.attemps)} attemps remaining"); // needs refining as get to 0 attempts and allows one more
-                System.Console.WriteLine($"sum total: {sumTotal}");
                 this.generateUserChoice();
                 this.checkWinner();
             } else {

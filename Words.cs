@@ -18,7 +18,7 @@ namespace WordleClone
         public void generateComputerChoice() {
             int wordListLength = 0;
             int numberChoice = 0;
-            string columnLengthQuery = "SELECT COUNT(id) FROM words;";
+            string columnLengthQuery = "SELECT COUNT(id) FROM allowed_words;";
 
             // open database connection
             using (var connection = new MySqlConnection(this.connectionString))
@@ -41,7 +41,7 @@ namespace WordleClone
                 Random randomNumber = new Random();
                 numberChoice = randomNumber.Next(1,wordListLength);
 
-                string computerChoiceQuery = $"SELECT word FROM words WHERE id = {numberChoice};";
+                string computerChoiceQuery = $"SELECT word FROM allowed_words WHERE id = {numberChoice};";
 
                 using (var command = new MySqlCommand(computerChoiceQuery, connection))
                 {

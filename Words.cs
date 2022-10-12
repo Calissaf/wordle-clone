@@ -12,17 +12,16 @@ namespace WordleClone
         public string userChoice {get; private set;} = "";
         public string computerChoice {get; private set;} = "";
         public int attemps {get; private set;} = 0;
-
         public int maxAttempts {get; private set;} = 5;
+        public string connectionString = @"Server=127.0.0.1;Database=wordlist;Uid=wordleuser;Pwd=Firebrand.1;";
 
         public void generateComputerChoice() {
             int wordListLength = 0;
             int numberChoice = 0;
-            string connectionString = @"Server=127.0.0.1;Database=wordlist;Uid=wordleuser;Pwd=Firebrand.1;";
             string columnLengthQuery = "SELECT COUNT(id) FROM words;";
 
             // open database connection
-            using (var connection = new MySqlConnection(connectionString))
+            using (var connection = new MySqlConnection(this.connectionString))
             {
                 connection.Open();
 
@@ -35,15 +34,12 @@ namespace WordleClone
                         {
                             wordListLength = Convert.ToInt32(reader.GetString(0));
 
-                            // System.Console.WriteLine($"{wordListLength}");
                         }
                     }
                 }
 
                 Random randomNumber = new Random();
                 numberChoice = randomNumber.Next(1,wordListLength);
-
-            // System.Console.WriteLine(numberChoice);
 
                 string computerChoiceQuery = $"SELECT word FROM words WHERE id = {numberChoice};";
 
@@ -68,11 +64,42 @@ namespace WordleClone
 
             System.Console.WriteLine("Enter a 5 letter word: ");
             string userInput = Console.ReadLine();
+            int wordID = 0;
 
             if (userInput.Length == 5 && userInput.All(Char.IsLetter)) {
-                this.userChoice = userInput.ToLower();
-                this.attemps++;
-                System.Console.WriteLine(this.userChoice);
+
+                userInput.ToLower();
+                string wordExistQuery = $"SELECT id FROM allowed_words WHERE word = '{userInput}';";
+
+                // open database connection
+                using (var connection = new MySqlConnection(this.connectionString))
+                {
+                    connection.Open();
+
+                    // get word id
+                    using (var command = new MySqlCommand(wordExistQuery, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                wordID = Convert.ToInt32(reader.GetString(0));
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+
+                // System.Console.WriteLine($"word id: {wordID}");
+
+                if (wordID > 0) {
+                    this.userChoice = userInput;
+                    this.attemps++;
+                    System.Console.WriteLine(this.userChoice);
+                } else {
+                    System.Console.WriteLine("word not recognised");
+                    this.generateUserChoice();
+                }
             } else {
                 System.Console.WriteLine("input doesn't meet requirements");
                 this.generateUserChoice();
@@ -91,19 +118,28 @@ namespace WordleClone
             char[] computerChoiceArray = this.computerChoice.ToCharArray();
             int[] winPositions = new int[5] {0,0,0,0,0};
             string[] winPositionColors = new string[5] {"grey", "grey", "grey", "grey", "grey"};
+            char[] checkedLetters = new char[5] {' ', ' ', ' ', ' ', ' '};
 
             for (int i = 0; i < userChoiceArray.Length; i++)
             {
                 if (userChoiceArray[i] == computerChoiceArray[i]) {
                     winPositions[i] = 2;
                     winPositionColors[i] = "green";
-                } else if (this.computerChoice.Contains(userChoiceArray[i])) {
-                    winPositions[i] = 1;
-                    winPositionColors[i] = "yellow";
+                    if (checkedLetters.Contains(userChoiceArray[i]) == false) {
+                        checkedLetters[i] = userChoiceArray[i];
+                    }
+                } 
+            }
+            
+            for (int j = 0; j < userChoiceArray.Length; j++)
+            {
+                int letterOccurencesInComputerChoice = this.computerChoice.Count(f => (f == userChoiceArray[j]));
+                if (this.computerChoice.Contains(userChoiceArray[j]) && checkedLetters.Contains(userChoiceArray[j]) == false || this.computerChoice.Contains(userChoiceArray[j]) && checkedLetters.Contains(userChoiceArray[j]) == true && letterOccurencesInComputerChoice > 1 && winPositions[j] == 0) {
+                    winPositions[j] = 1;
+                    winPositionColors[j] = "yellow";
                 }
-
-                sumTotal += winPositions[i];
-                System.Console.WriteLine($"letter: {userChoiceArray[i]}, color: {winPositionColors[i]}");
+                sumTotal += winPositions[j];
+                System.Console.WriteLine($"letter: {userChoiceArray[j]}, color: {winPositionColors[j]}");
             }
 
             if (sumTotal == 10)

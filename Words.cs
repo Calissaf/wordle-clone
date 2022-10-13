@@ -12,7 +12,7 @@ namespace WordleClone
         public string userChoice {get; private set;} = "";
         public string computerChoice {get; private set;} = "";
         public int attemps {get; private set;} = 0;
-        public int maxAttempts {get; private set;} = 5;
+        public int maxAttempts {get; private set;} = 6;
         public string connectionString = @"Server=127.0.0.1;Database=wordlist;Uid=wordleuser;Pwd=Firebrand.1;";
 
         public void generateComputerChoice() {

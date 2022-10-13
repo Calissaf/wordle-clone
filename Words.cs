@@ -51,7 +51,7 @@ namespace WordleClone
                         {
                             this.computerChoice = reader.GetString(0);
 
-                            System.Console.WriteLine($"computer choice: {this.computerChoice}");
+                            // System.Console.WriteLine($"computer choice: {this.computerChoice}");
                         }
                     }
                 }
@@ -68,7 +68,10 @@ namespace WordleClone
 
             if (userInput.Length == 5 && userInput.All(Char.IsLetter)) {
 
-                userInput.ToLower();
+                userInput = userInput.ToLower();
+
+                // System.Console.WriteLine($"user input: {userInput}");
+
                 string wordExistQuery = $"SELECT id FROM allowed_words WHERE word = '{userInput}';";
 
                 // open database connection
@@ -95,7 +98,7 @@ namespace WordleClone
                 if (wordID > 0) {
                     this.userChoice = userInput;
                     this.attemps++;
-                    System.Console.WriteLine(this.userChoice);
+                    // System.Console.WriteLine(this.userChoice);
                 } else {
                     System.Console.WriteLine("word not recognised");
                     this.generateUserChoice();
